@@ -18,5 +18,12 @@ module.exports = {
     ecmaVersion: 'latest'
   },
   plugins: ['react', '@typescript-eslint'],
-  rules: {}
+  rules: {
+    'react/display-name': 'off'
+  },
+  settings: {
+    react: {
+      version: 'detect'
+    }
+  }
 }
