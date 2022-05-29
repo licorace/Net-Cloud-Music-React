@@ -32,7 +32,7 @@ const HYAppHeader = memo(() => {
     <HeaderWrapper>
       <div className="content wrap-v1">
         <HeaderLeft>
-          <a href="#" className="logo sprite_01">
+          <a href="#/discover/recommend" className="logo sprite_01">
             网易云音乐
           </a>
           <div className="select-list">

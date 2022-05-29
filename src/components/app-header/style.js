@@ -38,7 +38,7 @@ export const HeaderLeft = styled.div`
       a {
         display: block;
         padding: 0 20px;
-        color: pink;
+        color: #ccc;
       }
 
       :last-of-type a {
