@@ -20,14 +20,14 @@ const routes = [
     path: '/discover',
     element: <HYDiscover />,
     children: [
-      // {
-      //   path: '/discover',
-      //   element: <Navigate to="/discover/recommend" replace={true} />
-      // },
       {
         path: '/discover',
-        element: <HYRecommend />
+        element: <Navigate to="/discover/recommend" replace={true} />
       },
+      // {
+      //   path: '/discover',
+      //   element: <HYRecommend />
+      // },
       {
         path: '/discover/recommend',
         element: <HYRecommend />

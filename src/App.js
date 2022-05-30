@@ -1,4 +1,5 @@
 import React, { memo, useLayoutEffect } from 'react'
+import { Provider } from 'react-redux'
 import {
   HashRouter as Router,
   useRoutes,
@@ -8,7 +9,9 @@ import {
 
 import HYAppFooter from './components/app-footer'
 import HYAppHeader from './components/app-header'
+
 import routes from './router'
+import store from './store'
 
 const App = memo(() => {
   const GetRoutes = () => {
@@ -55,13 +58,13 @@ const App = memo(() => {
   }
 
   return (
-    <div>
+    <Provider store={store}>
       <Router>
         <HYAppHeader />
         <GetRoutes />
         <HYAppFooter />
       </Router>
-    </div>
+    </Provider>
   )
 })
 
