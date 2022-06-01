@@ -1,19 +1,19 @@
-import React, { memo, useEffect } from 'react'
+import React, { memo } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 
 import { discoverMenu } from '@/common/local-data'
-import request from '@/services/request'
+// import request from '@/services/request'
 
 import { DiscoverWrapper, TopMenu } from './style'
 
 const HYDiscover = memo((props) => {
-  useEffect(() => {
-    request({
-      url: '/banner'
-    }).then((res) => {
-      console.log(res)
-    })
-  })
+  // useEffect(() => {
+  //   request({
+  //     url: '/banner'
+  //   }).then((res) => {
+  //     console.log(res)
+  //   })
+  // })
   // console.log('被渲染了')
   return (
     <DiscoverWrapper>

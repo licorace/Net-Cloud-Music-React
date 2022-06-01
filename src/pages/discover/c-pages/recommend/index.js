@@ -1,30 +1,30 @@
-import React, { memo, useEffect } from 'react'
-import { shallowEqual, useDispatch, useSelector } from 'react-redux'
+import React, { memo } from 'react'
 
-// import { connect } from 'react-redux'
+import HYTopBanner from './c-cpns/top-banner'
+import HYHotRecommend from './c-cpns/hot-recommend'
+import HYNewAlbum from './c-cpns/new-album'
+import HYRecommendRanking from './c-cpns/recommend-ranking'
 
-import { getTopBannerAction } from './store/actionCreators'
+import {
+  RecommendWrapper,
+  Content,
+  RecommendLeft,
+  RecommendRight
+} from './style'
 
 const HYRecommend = (props) => {
-  // 组件和redux关联:获取数据和进行操作
-  const { topBanners } = useSelector(
-    (state) => ({
-      // topBanners: state.get('recommend').get('topBanners')
-      topBanners: state.getIn(['recommend', 'topBanners'])
-    }),
-    shallowEqual
-  )
-  const dispatch = useDispatch()
-
-  // 发送网络请求
-  useEffect(() => {
-    dispatch(getTopBannerAction)
-  }, [dispatch])
-
   return (
-    <div>
-      <h2>HYRecommend:{topBanners.length}</h2>
-    </div>
+    <RecommendWrapper>
+      <HYTopBanner />
+      <Content className="wrap-v2">
+        <RecommendLeft>
+          <HYHotRecommend />
+          <HYNewAlbum />
+          <HYRecommendRanking />
+        </RecommendLeft>
+        <RecommendRight></RecommendRight>
+      </Content>
+    </RecommendWrapper>
   )
 }
 

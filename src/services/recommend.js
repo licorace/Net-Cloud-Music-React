@@ -5,3 +5,20 @@ export function getTopBanners() {
     url: '/banner'
   })
 }
+export function getHotRecommends(limit) {
+  return request({
+    url: '/personalized',
+    params: {
+      limit
+    }
+  })
+}
+
+export function getNewAlbums(limit) {
+  return request({
+    url: '/album/new',
+    params: {
+      limit
+    }
+  })
+}
