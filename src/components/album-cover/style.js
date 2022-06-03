@@ -23,6 +23,24 @@ export const AlbumWrapper = styled.div`
       bottom: 0;
       background-position: 0 ${(props) => props.bgp};
       text-indent: -9999px;
+
+      &:hover + .icon-play {
+        background-position: 0 -85px;
+      }
+    }
+
+    .icon-play {
+      position: absolute;
+      right: 10px;
+      bottom: 5px;
+      left: 72px;
+      /* background-position: 0 -85px; */
+      width: 22px;
+      height: 22px;
+
+      &:hover {
+        background-position: 0 -85px;
+      }
     }
   }
 

@@ -2,7 +2,7 @@ import styled from 'styled-components'
 
 export const SongsCoverWrapper = styled.div`
   width: 140px;
-  margin: 0px ${(props) => props.right || 0} 20px 0;
+  margin: 20px ${(props) => props.right || 0} 20px 0;
 
   .cover-top {
     position: relative;
@@ -19,6 +19,7 @@ export const SongsCoverWrapper = styled.div`
       width: 100%;
       height: 100%;
       background-position: 0 0;
+      cursor: pointer;
 
       .info {
         display: flex;
@@ -32,6 +33,7 @@ export const SongsCoverWrapper = styled.div`
         background-position: 0 -537px;
         color: #ccc;
         height: 27px;
+        cursor: default;
 
         .erji {
           margin-right: 5px;
@@ -46,6 +48,11 @@ export const SongsCoverWrapper = styled.div`
           width: 16px;
           height: 17px;
           background-position: 0 0;
+
+          &:hover {
+            background-position: 0 -60px;
+            cursor: pointer;
+          }
         }
       }
     }

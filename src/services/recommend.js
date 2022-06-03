@@ -1,4 +1,5 @@
 import request from './request'
+import { LOGIN_COOKIE } from '../common/constants'
 
 export function getTopBanners() {
   return request({
@@ -22,3 +23,22 @@ export function getNewAlbums(limit) {
     }
   })
 }
+
+export function getTopList(id) {
+  return request({
+    url: '/playlist/detail',
+    params: {
+      id,
+      cookie: LOGIN_COOKIE
+    }
+  })
+}
+
+// export function getLoginStatus() {
+//   return request({
+//     url: '/login/status',
+//     params: {
+//       cookie: LOGIN_COOKIE
+//     }
+//   })
+// }

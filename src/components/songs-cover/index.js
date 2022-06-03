@@ -10,13 +10,14 @@ const HYSongCover = memo((props) => {
     <SongsCoverWrapper>
       <div className="cover-top">
         <img src={getSizeImage(info.picUrl, 140)} alt=""></img>
-        <div className="cover sprite_covor">
+
+        <div className="cover sprite_covor" title={info.name}>
           <div className="info sprite_covor">
             <span>
               <i className="erji sprite_icon"></i>
               {getCount(info.playCount)}
             </span>
-            <i className="play sprite_icon"></i>
+            <i className="play sprite_icon" title="播放"></i>
           </div>
         </div>
       </div>

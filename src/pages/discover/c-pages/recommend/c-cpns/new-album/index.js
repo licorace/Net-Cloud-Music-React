@@ -4,6 +4,7 @@ import { shallowEqual, useSelector, useDispatch } from 'react-redux'
 
 import { Carousel } from 'antd'
 import HYThemeHeaderRCM from '@/components/theme-header-rcm'
+import HYAlbumCover from '@/components/album-cover'
 import { getNewAlbumAction } from '../../store/actionCreators'
 import { AlbumWrapper } from './style'
 
@@ -32,12 +33,20 @@ const HYNewAlbum = memo(() => {
           onClick={() => albumRef.current.prev()}
         ></button>
         <div className="album">
-          <Carousel dots={false} ref={albumRef}>
+          <Carousel dots={false} ref={albumRef} lazyLoad={true} speed="1600">
             {[0, 1].map((item) => {
               return (
                 <div key={item} className="page">
                   {newAlbums.slice(item * 5, (item + 1) * 5).map((iten) => {
-                    return <div key={iten.id}>{iten.name}</div>
+                    return (
+                      <HYAlbumCover
+                        key={iten.id}
+                        info={iten}
+                        size={100}
+                        width={118}
+                        bgp={'-570px'}
+                      />
+                    )
                   })}
                 </div>
               )
