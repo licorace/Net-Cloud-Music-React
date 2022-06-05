@@ -33,7 +33,7 @@ const HYNewAlbum = memo(() => {
           onClick={() => albumRef.current.prev()}
         ></button>
         <div className="album">
-          <Carousel dots={false} ref={albumRef} lazyLoad={true} speed="1600">
+          <Carousel dots={false} ref={albumRef} lazyLoad={true} speed="1300">
             {[0, 1].map((item) => {
               return (
                 <div key={item} className="page">
