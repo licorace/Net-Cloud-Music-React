@@ -29,7 +29,7 @@ const HYAppHeader = memo(() => {
 
   // 返回的jsx
   return (
-    <HeaderWrapper>
+    <HeaderWrapper className="app-header">
       <div className="content wrap-v1">
         <HeaderLeft>
           <a href="#/discover/recommend" className="logo sprite_01">

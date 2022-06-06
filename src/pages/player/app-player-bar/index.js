@@ -1,7 +1,9 @@
 import React, { memo, useState, useEffect, useRef, useCallback } from 'react'
 import { useDispatch, shallowEqual, useSelector } from 'react-redux'
+import { NavLink } from 'react-router-dom'
 
 import { Slider } from 'antd'
+import classnames from 'classnames'
 
 import { getSongDetailAction } from '../store/actionCreators'
 
@@ -19,6 +21,9 @@ const HYAppPlayerBar = memo(() => {
   const [isPlaying, setIsPlaying] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
   const [isLoadedCount, setIsLoadedCount] = useState(0)
+
+  // 控制playbar是否显示的标志符
+  const [isShow, setIsShow] = useState(false)
   // redux hooks
   const { currentSong } = useSelector(
     (state) => ({
@@ -30,6 +35,7 @@ const HYAppPlayerBar = memo(() => {
 
   // other hooks
   const audioRef = useRef()
+  const playbarRef = useRef()
   useEffect(() => {
     dispatch(getSongDetailAction(1847468261))
   }, [dispatch])
@@ -101,8 +107,31 @@ const HYAppPlayerBar = memo(() => {
     [duration]
   )
 
+  const handleMouseOver = useCallback((e) => {
+    if (!isShow) {
+      playbarRef.current.style.bottom = '0px'
+    }
+    // setIsShow(!isShow)
+  })
+
+  const handleMouseOut = useCallback((e) => {
+    if (!isShow) {
+      playbarRef.current.style.bottom = '-42px'
+    }
+    // setIsShow(!isShow)
+  })
+
+  const showPlayBar = useCallback((e) => {
+    setIsShow(!isShow)
+  })
+
   return (
-    <PlaybarWrapper className="sprite_player">
+    <PlaybarWrapper
+      className="sprite_player"
+      ref={playbarRef}
+      onMouseOver={(e) => handleMouseOver(e)}
+      onMouseOut={(e) => handleMouseOut(e)}
+    >
       <div className="content wrap-v2">
         <Control isPlaying={isPlaying}>
           <button className="sprite_player prev"></button>
@@ -115,7 +144,10 @@ const HYAppPlayerBar = memo(() => {
         <PlayInfo isLoaded={isLoaded}>
           <div className="image ">
             <img src={getSizeImage(picUrl, 34)} alt="" />
-            <a href="/#" alt="" className="mask sprite_player"></a>
+            <NavLink
+              to="/discover/player"
+              className="mask sprite_player"
+            ></NavLink>
           </div>
           <div className="info">
             <div className="song">
@@ -150,6 +182,15 @@ const HYAppPlayerBar = memo(() => {
             <button className="sprite_player btn playlist"></button>
           </div>
         </Operator>
+      </div>
+      <div className="sprite_player show-content">
+        <button
+          className={classnames('sprite_player', {
+            'lock-btn': isShow,
+            'unlock-btn': !isShow
+          })}
+          onClick={(e) => showPlayBar()}
+        ></button>
       </div>
       <audio ref={audioRef} onTimeUpdate={timeUpdate} />
     </PlaybarWrapper>

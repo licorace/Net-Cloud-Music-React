@@ -25,6 +25,23 @@ const App = memo(() => {
       if (location.pathname === '/discover') {
         navigate('./discover/recommend', { replace: true })
       }
+      if (location.pathname === '/mine') {
+        const headerel = document.querySelector('.app-header')
+        // console.log(headerel)
+        headerel.setAttribute(
+          'style',
+          'position:sticky;top:0;left:-15px;z-index:1000;display:block'
+        )
+
+        const footerel = document.querySelector('.app-footer')
+        footerel.setAttribute('style', 'display:none')
+        // const rootel = document.querySelector('#root')
+        // console.log(rootel)
+        // rootel.setAttribute('style', 'display:flex;flex-direction:column;')
+        // const middle = document.querySelector('.content')
+        // console.log(middle)
+        // middle.setAttribute('style', 'flex-grow:1')
+      }
     }, [location.pathname])
 
     // useLayoutEffect(() => {

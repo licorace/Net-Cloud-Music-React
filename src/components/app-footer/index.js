@@ -6,7 +6,7 @@ import { AppFooterWrapper, FooterLeft, FooterRight } from './style'
 
 export default memo(function HYAppFooter() {
   return (
-    <AppFooterWrapper>
+    <AppFooterWrapper className="app-footer">
       <div className="wrap-v2 content">
         <FooterLeft className="left">
           <div className="link">

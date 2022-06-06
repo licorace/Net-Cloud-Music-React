@@ -3,11 +3,14 @@ import styled from 'styled-components'
 export const PlaybarWrapper = styled.div`
   position: fixed;
   left: 0;
-  right: 0;
+  right: -15px;
   bottom: 0;
   height: 52px;
+  /* margin-right: 67px; */
   background-position: 0 0;
   background-repeat: repeat;
+  z-index: 1000;
+  transition: all 200ms linear;
 
   .content {
     display: flex;
@@ -18,7 +21,65 @@ export const PlaybarWrapper = styled.div`
     transform: translateX(-50%);
     bottom: 0;
     height: 47px;
+    margin-right: 67px;
     /* background-color: #fff; */
+  }
+
+  .show-content {
+    position: absolute;
+    top: -14px;
+    right: 15px;
+    width: 52px;
+    height: 67px;
+    background-position: 0 -380px;
+
+    .lock-btn {
+      background-position: -100px -380px;
+      display: block;
+      width: 18px;
+      height: 18px;
+      margin: 6px 0 0 17px;
+      cursor: pointer;
+
+      &:hover {
+        background-position: -100px -400px;
+      }
+    }
+
+    .unlock-btn {
+      background-position: -80px -380px;
+      display: block;
+      width: 18px;
+      height: 18px;
+      margin: 6px 0 0 17px;
+      cursor: pointer;
+
+      &:hover {
+        background-position: -80px -400px;
+      }
+    }
+  }
+
+  .unlock-content {
+    position: absolute;
+    top: -14px;
+    right: 15px;
+    width: 52px;
+    height: 67px;
+    background-position: 0 -380px;
+
+    .btn {
+      background-position: -100px -380px;
+      display: block;
+      width: 18px;
+      height: 18px;
+      margin: 6px 0 0 17px;
+      cursor: pointer;
+
+      &:hover {
+        background-position: -100px -400px;
+      }
+    }
   }
 `
 
