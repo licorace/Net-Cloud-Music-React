@@ -1,8 +1,8 @@
 import * as actionTypes from './constants'
 
 import { getSongDetail, getLyric } from '@/services/player'
-
 import { getRandomNumber } from '@/utils/math-utils'
+import { parseLyric } from '@/utils/parse-lyric'
 
 export const changeCurrentSongAction = (currentSong) => ({
   type: actionTypes.CHANGE_CURRENT_SONG,
@@ -28,6 +28,16 @@ export const changeToPlayOrPauseAction = (isPlaying) => ({
 export const changeSequenceAction = (sequence) => ({
   type: actionTypes.CHANGE_SEQUENCE,
   sequence
+})
+
+export const changeLyricsListAction = (lyricList) => ({
+  type: actionTypes.CHANGE_LYRIC_LIST,
+  lyricList
+})
+
+export const changeCurrentLyricIndexAction = (currentLyricIndex) => ({
+  type: actionTypes.CHANGE_CURRENT_LYRIC_INDEX,
+  currentLyricIndex
 })
 
 export const changeCurrentIndexAndSongAction = (tag) => {
@@ -58,6 +68,9 @@ export const changeCurrentIndexAndSongAction = (tag) => {
 
     // 请求歌词
     dispatch(getLyricAction(currentSong.id))
+
+    // 将更新后的数据保存到localStorage中去
+    setCache('player', 'stateOfPlayer', getState)
   }
 }
 
@@ -87,6 +100,7 @@ export const getSongDetailAction = (ids) => {
       // 3.请求该歌曲的歌词
       dispatch(getLyricAction(song.id))
 
+      // 4.将更新后的数据保存到localStorage中去
       setCache('player', 'stateOfPlayer', getState)
     } else {
       // 没有找到歌曲
@@ -107,6 +121,7 @@ export const getSongDetailAction = (ids) => {
         // 3.请求该歌曲的歌词
         dispatch(getLyricAction(song.id))
 
+        // 4.将更新后的数据保存到localStorage中去
         setCache('player', 'stateOfPlayer', getState)
       })
     }
@@ -116,7 +131,9 @@ export const getSongDetailAction = (ids) => {
 export const getLyricAction = (id) => {
   return (dispatch) => {
     getLyric(id).then((res) => {
-      console.log(res.lrc.lyric)
+      const lyric = res?.lrc?.lyric
+      const lyricList = parseLyric(lyric)
+      dispatch(changeLyricsListAction(lyricList))
     })
   }
 }

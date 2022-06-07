@@ -9,7 +9,7 @@ import React, {
 import { shallowEqual, useSelector, useDispatch } from 'react-redux'
 import { NavLink } from 'react-router-dom'
 
-import { Slider } from 'antd'
+import { Slider, message } from 'antd'
 import classnames from 'classnames'
 
 import { getSizeImage, getPlaySong } from '@/utils/format-utils'
@@ -21,7 +21,9 @@ import {
   changeCurrentSongIndexAction,
   changeToPlayOrPauseAction,
   changeSequenceAction,
-  changeCurrentIndexAndSongAction
+  changeCurrentIndexAndSongAction,
+  getLyricAction,
+  changeCurrentLyricIndexAction
 } from '../store/actionCreators'
 
 import { PlaybarWrapper, Control, PlayInfo, Operator } from './style'
@@ -39,14 +41,17 @@ const HYAppPlayerBar = memo(
     // 控制playbar是否显示的标志符
     const [isShow, setIsShow] = useState(false)
     // redux hooks
-    const { currentSong, isPlaying, sequence } = useSelector(
-      (state) => ({
-        currentSong: state.getIn(['player', 'currentSong']),
-        isPlaying: state.getIn(['player', 'isPlaying']),
-        sequence: state.getIn(['player', 'sequence'])
-      }),
-      shallowEqual
-    )
+    const { currentSong, isPlaying, sequence, lyricList, currentLyricIndex } =
+      useSelector(
+        (state) => ({
+          currentSong: state.getIn(['player', 'currentSong']),
+          isPlaying: state.getIn(['player', 'isPlaying']),
+          sequence: state.getIn(['player', 'sequence']),
+          lyricList: state.getIn(['player', 'lyricList']),
+          currentLyricIndex: state.getIn(['player', 'currentLyricIndex'])
+        }),
+        shallowEqual
+      )
     const dispatch = useDispatch()
 
     // other hooks
@@ -68,6 +73,7 @@ const HYAppPlayerBar = memo(
 
     useEffect(() => {
       audioRef.current.src = getPlaySong(currentSong.id)
+      dispatch(getLyricAction(currentSong.id))
       // audioRef.current
       //   .play()
       //   .then((res) => {
@@ -121,6 +127,28 @@ const HYAppPlayerBar = memo(
         setCurrentTime(currentTime * 1000)
         setProgress(((currentTime * 1000) / duration) * 100)
       }
+
+      // 获取当前歌词
+      let i = 0
+      for (; i < lyricList.length; i++) {
+        const lyricItem = lyricList[i]
+        if (currentTime * 1000 < lyricItem.time) {
+          break
+        }
+      }
+      // console.log(i - 1)
+      // console.log(lyricList[currentLyricIndex])
+      if (currentLyricIndex !== i - 1) {
+        // console.log(i - 1)
+        dispatch(changeCurrentLyricIndexAction(i - 1))
+        const content = lyricList[i - 1] && lyricList[i - 1].content
+        message.open({
+          key: 'lyric',
+          content,
+          duration: 0,
+          className: 'lyric-class'
+        })
+      }
     }
 
     const sliderChange = useCallback(
@@ -137,7 +165,7 @@ const HYAppPlayerBar = memo(
       (value) => {
         const currentTime = ((value / 100) * duration) / 1000
         audioRef.current.currentTime = currentTime
-        console.log('sliderAfterChange:', audioRef.current.currentTime)
+        // console.log('sliderAfterChange:', audioRef.current.currentTime)
         setCurrentTime(currentTime * 1000)
         setIsChanging(false)
 
