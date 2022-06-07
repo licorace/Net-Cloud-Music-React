@@ -1,12 +1,43 @@
-import React, { memo } from 'react'
+import React, { memo, useCallback } from 'react'
+import { useDispatch, useSelector, shallowEqual } from 'react-redux'
+
+import { getSizeImage } from '@/utils/format-utils'
+// import { getSongDetailAction } from '@/pages/player/store'
+import {
+  getSongDetailAction,
+  changeToPlayOrPauseAction
+} from '@/pages/player/store'
 
 import { TopRankingWrapper } from './style'
 
-import { getSizeImage } from '@/utils/format-utils'
-
 const HYTopRanking = memo((props) => {
+  // props and state
   const { info } = props
   const { tracks = [] } = info
+
+  // redux hooks
+  const { isPlaying } = useSelector(
+    (state) => ({
+      isPlaying: state.getIn(['player', 'isPlaying'])
+    }),
+    shallowEqual
+  )
+
+  const dispatch = useDispatch()
+
+  // other handle
+  const playMusic = useCallback((item) => {
+    dispatch(getSongDetailAction(item.id))
+
+    const el = document.querySelector('audio')
+    el.setAttribute('autoplay', 'true')
+    const playbtnel = document.querySelector('.content button.global_play_btn')
+    dispatch(changeToPlayOrPauseAction(!isPlaying))
+    if (playbtnel.classList.value.indexOf('pause') !== -1) {
+      // console.log(playbtnel.classList.value)
+      playbtnel.classList.replace('pause', 'ply')
+    }
+  }, [])
 
   return (
     <TopRankingWrapper>
@@ -37,7 +68,11 @@ const HYTopRanking = memo((props) => {
                   {item.name}
                 </a>
                 <div className="operate">
-                  <button className="btn play sprite_02" title="播放"></button>
+                  <button
+                    className="btn play sprite_02"
+                    title="播放"
+                    onClick={(e) => playMusic(item)}
+                  ></button>
                   <button
                     className="btn addto sprite_icon2"
                     title="添加到播放列表"

@@ -86,13 +86,10 @@ export const TopRankingWrapper = styled.div`
         .name {
           flex: 1;
           color: #000;
-
-          &:hover {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            word-wrap: nowrap;
-          }
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          word-wrap: normal;
         }
 
         .operate {
@@ -138,10 +135,7 @@ export const TopRankingWrapper = styled.div`
 
       &:hover {
         cursor: pointer;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        word-wrap: nowrap;
+
         .operate {
           display: block;
         }

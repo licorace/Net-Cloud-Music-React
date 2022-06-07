@@ -103,16 +103,32 @@ export const Control = styled.div`
     }
   }
 
-  .play {
+  .ply {
     width: 36px;
     height: 36px;
     margin: 0 8px;
-    background-position: 0 ${(props) => (props.isPlaying ? '-165px' : '-204px')};
+    /* background-position: 0 ${(props) =>
+      props.isPlaying ? '-165px' : '-204px'}; */
+    background-position: 0 -165px;
     cursor: pointer;
 
     &:hover {
-      background-position: -40px
-        ${(props) => (props.isPlaying ? '-165px' : '-204px')};
+      /* background-position: -40px
+        ${(props) => (props.isPlaying ? '-165px' : '-204px')}; */
+      background-position: -40px -165px;
+    }
+  }
+
+  .pause {
+    width: 36px;
+    height: 36px;
+    margin: 0 8px;
+
+    background-position: 0 -204px;
+    cursor: pointer;
+
+    &:hover {
+      background-position: -40px -204px;
     }
   }
 
