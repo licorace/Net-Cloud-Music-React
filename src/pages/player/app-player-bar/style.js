@@ -276,6 +276,19 @@ export const Operator = styled.div`
             return '-3px -344px'
         }
       }};
+
+      &:hover {
+        background-position: ${(props) => {
+          switch (props.sequence) {
+            case 1:
+              return '-93px -248px'
+            case 2:
+              return '-93px -344px'
+            default:
+              return '-33px -344px'
+          }
+        }};
+      }
     }
 
     .playlist {

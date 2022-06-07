@@ -1,6 +1,8 @@
 import * as actionTypes from './constants'
 
-import { getSongDetail } from '@/services/player'
+import { getSongDetail, getLyric } from '@/services/player'
+
+import { getRandomNumber } from '@/utils/math-utils'
 
 export const changeCurrentSongAction = (currentSong) => ({
   type: actionTypes.CHANGE_CURRENT_SONG,
@@ -23,6 +25,43 @@ export const changeToPlayOrPauseAction = (isPlaying) => ({
   isPlaying
 })
 
+export const changeSequenceAction = (sequence) => ({
+  type: actionTypes.CHANGE_SEQUENCE,
+  sequence
+})
+
+export const changeCurrentIndexAndSongAction = (tag) => {
+  return (dispatch, getState) => {
+    const playList = getState().getIn(['player', 'playList'])
+    const sequence = getState().getIn(['player', 'sequence'])
+    let currentSongIndex = getState().getIn(['player', 'currentSongIndex'])
+
+    switch (sequence) {
+      case 1: {
+        let randomIndex = getRandomNumber(playList.length)
+        while (randomIndex === currentSongIndex) {
+          randomIndex = getRandomNumber(playList.length)
+        }
+        currentSongIndex = randomIndex
+        break
+      } // 随机播放
+
+      default: // 顺序播放,因为单曲循环和顺序播放的点击上一首和下一首的逻辑是一样的,因此合并了,只是说单曲循环的结束动作需要另行设置
+        currentSongIndex += tag
+        if (currentSongIndex >= playList.length) currentSongIndex = 0
+        if (currentSongIndex < 0) currentSongIndex = playList.length - 1
+    }
+
+    const currentSong = playList[currentSongIndex]
+    dispatch(changeCurrentSongAction(currentSong))
+    dispatch(changeCurrentSongIndexAction(currentSongIndex))
+
+    // 请求歌词
+    dispatch(getLyricAction(currentSong.id))
+  }
+}
+
+// 这个是控制存入localStorage的
 const setCache = (key, StorageKey, getState) => {
   const reduxState = getState().getIn([key])
   const stateOfPlayer = {}
@@ -39,19 +78,21 @@ export const getSongDetailAction = (ids) => {
     const songIndex = playList.findIndex((song) => song.id === ids)
 
     // 2.判断是否找到歌曲
+    let song = null
     if (songIndex !== -1) {
       // 查找歌曲
       dispatch(changeCurrentSongIndexAction(songIndex))
-      const song = playList[songIndex]
+      song = playList[songIndex]
       dispatch(changeCurrentSongAction(song))
+      // 3.请求该歌曲的歌词
+      dispatch(getLyricAction(song.id))
 
       setCache('player', 'stateOfPlayer', getState)
     } else {
       // 没有找到歌曲
-
       // 请求歌曲数据
       getSongDetail(ids).then((res) => {
-        const song = res.songs && res.songs[0]
+        song = res.songs && res.songs[0]
         if (!song) return
 
         // 1.将最新请求到的歌曲添加到播放列表中
@@ -63,8 +104,19 @@ export const getSongDetailAction = (ids) => {
         dispatch(changeCurrentSongIndexAction(newPlayList.length - 1))
         dispatch(changeCurrentSongAction(song))
 
+        // 3.请求该歌曲的歌词
+        dispatch(getLyricAction(song.id))
+
         setCache('player', 'stateOfPlayer', getState)
       })
     }
+  }
+}
+
+export const getLyricAction = (id) => {
+  return (dispatch) => {
+    getLyric(id).then((res) => {
+      console.log(res.lrc.lyric)
+    })
   }
 }

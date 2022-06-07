@@ -6,7 +6,8 @@ const defaultState = Map({
   playList: [],
   currentSongIndex: 0,
   currentSong: {},
-  isPlaying: false
+  isPlaying: false,
+  sequence: 0 // ?自己制定的规则,0 循环 1 随机  2 单曲
 })
 
 function reducer(state = defaultState, action) {
@@ -19,6 +20,8 @@ function reducer(state = defaultState, action) {
       return state.set('currentSongIndex', action.index)
     case actionTypes.CHANGE_TO_PLAY_OR_PAUSE:
       return state.set('isPlaying', action.isPlaying)
+    case actionTypes.CHANGE_SEQUENCE:
+      return state.set('sequence', action.sequence)
     default:
       return state
   }

@@ -12,8 +12,6 @@ import { NavLink } from 'react-router-dom'
 import { Slider } from 'antd'
 import classnames from 'classnames'
 
-// import { getSongDetailAction } from '../store/actionCreators'
-
 import { getSizeImage, getPlaySong } from '@/utils/format-utils'
 import dayjs from 'dayjs'
 
@@ -21,7 +19,9 @@ import {
   changePlayListAction,
   changeCurrentSongAction,
   changeCurrentSongIndexAction,
-  changeToPlayOrPauseAction
+  changeToPlayOrPauseAction,
+  changeSequenceAction,
+  changeCurrentIndexAndSongAction
 } from '../store/actionCreators'
 
 import { PlaybarWrapper, Control, PlayInfo, Operator } from './style'
@@ -33,17 +33,17 @@ const HYAppPlayerBar = memo(
     const [progress, setProgress] = useState(0)
     const [isChanging, setIsChanging] = useState(false)
 
-    // const [isPlaying, setIsPlaying] = useState(false)
     const [isLoaded, setIsLoaded] = useState(false)
     const [isLoadedCount, setIsLoadedCount] = useState(0)
 
     // 控制playbar是否显示的标志符
     const [isShow, setIsShow] = useState(false)
     // redux hooks
-    const { currentSong, isPlaying } = useSelector(
+    const { currentSong, isPlaying, sequence } = useSelector(
       (state) => ({
         currentSong: state.getIn(['player', 'currentSong']),
-        isPlaying: state.getIn(['player', 'isPlaying'])
+        isPlaying: state.getIn(['player', 'isPlaying']),
+        sequence: state.getIn(['player', 'sequence'])
       }),
       shallowEqual
     )
@@ -67,14 +67,16 @@ const HYAppPlayerBar = memo(
     }, [])
 
     useEffect(() => {
-      // console.log('我被渲染啦')
       audioRef.current.src = getPlaySong(currentSong.id)
-      // audioRef.current.play().then((res) => {
-      //   setIsPlaying(true)
-      // })
-      // .catch((err) => {
-      //   setIsPlaying(false)
-      // })
+      // audioRef.current
+      //   .play()
+      //   .then((res) => {
+      //     dispatch(changeToPlayOrPauseAction(true))
+      //   })
+      //   .catch((err) => {
+      //     console.log(err)
+      //     dispatch(changeToPlayOrPauseAction(false))
+      //   })
     }, [currentSong])
 
     useEffect(() => {
@@ -83,7 +85,6 @@ const HYAppPlayerBar = memo(
       // 这里是判断在刷新之前isShow是处于lock还是unlock状态,'true'是lock状态,那么就要重新执行一次showPlayer,
       // 因为每次刷新之后,isShow都会变成false状态,false是unlock状态,那么就不需要执行showPlayer,因为每次刷新之后,isShow都会变成false状态
       if (isShowValue === 'true') {
-        // console.log('ok')
         showPlayBar()
       }
     }, [])
@@ -94,31 +95,19 @@ const HYAppPlayerBar = memo(
     const duration = currentSong.dt || 0
     const showDuration = dayjs(duration).format('mm:ss')
     const showCurrentTime = dayjs(currentTime).format('mm:ss')
-    // const progress = (currentTime / duration) * 100
 
     // handle function
     const playMusic = useCallback(() => {
-      // audioRef.current.src = getPlaySong(currentSong.id)
       const value = playOrPauseRef.current.classList.value
       // console.log(value.indexOf('ply'))
       if (value.indexOf('pause') === -1) {
-        // console.log('目前是播放状态')
-        // console.log('操作之前的', isPlaying)
         playOrPauseRef.current.classList.replace('ply', 'pause')
         audioRef.current.autoplay = false
-        // if (isPlaying === false) {
-        //   // console.log('wocaozuole')
-        //   setIsPlaying((isPlaying) => !isPlaying)
-        // }
       } else {
-        // console.log('目前是暂停状态')
         playOrPauseRef.current.classList.replace('pause', 'ply')
       }
-      // console.log('切换之前', isPlaying)
       isPlaying ? audioRef.current.pause() : audioRef.current.play()
       dispatch(changeToPlayOrPauseAction(!isPlaying))
-      // setIsPlaying(!isPlaying)
-      // console.log(isLoaded, isLoadedCount)
 
       if (isLoadedCount === 0) {
         setIsLoaded(true)
@@ -127,7 +116,6 @@ const HYAppPlayerBar = memo(
     }, [isPlaying, isLoaded, isLoadedCount])
 
     const timeUpdate = (e) => {
-      // console.log('timeupdate:', e.target.currentTime)
       const currentTime = e.target.currentTime
       if (!isChanging) {
         setCurrentTime(currentTime * 1000)
@@ -161,22 +149,63 @@ const HYAppPlayerBar = memo(
       [duration]
     )
 
-    const handleMouseOver = useCallback((e) => {
-      if (!isShow) {
-        playbarRef.current.style.bottom = '0px'
-      }
-    })
+    const handleMouseOver = useCallback(
+      (e) => {
+        if (!isShow) {
+          playbarRef.current.style.bottom = '0px'
+        }
+      },
+      [isShow]
+    )
 
-    const handleMouseOut = useCallback((e) => {
-      if (!isShow) {
-        playbarRef.current.style.bottom = '-42px'
-      }
-    })
+    const handleMouseOut = useCallback(
+      (e) => {
+        if (!isShow) {
+          playbarRef.current.style.bottom = '-42px'
+        }
+      },
+      [isShow]
+    )
 
-    const showPlayBar = useCallback((e) => {
-      setIsShow(!isShow)
-      window.localStorage.setItem('isShowValue', !isShow)
-    })
+    const showPlayBar = useCallback(
+      (e) => {
+        setIsShow(!isShow)
+        window.localStorage.setItem('isShowValue', !isShow)
+      },
+      [isShow]
+    )
+
+    const changeSequence = useCallback(() => {
+      let currentSequence = sequence + 1
+      if (currentSequence > 2) {
+        currentSequence = 0
+      }
+      dispatch(changeSequenceAction(currentSequence))
+    }, [sequence])
+
+    const changeMusic = useCallback(
+      (tag) => {
+        dispatch(changeCurrentIndexAndSongAction(tag))
+        // console.log(isPlaying)
+        if (isPlaying) {
+          audioRef.current.autoplay = true
+        }
+      },
+      [isPlaying]
+    )
+
+    const handleMusicEnded = useCallback(() => {
+      if (sequence === 2) {
+        // 确认处于单曲循环状态
+        audioRef.current.currentTime = 0
+        audioRef.current.play()
+      } else {
+        dispatch(changeCurrentIndexAndSongAction(1))
+        if (isPlaying) {
+          audioRef.current.autoplay = true
+        }
+      }
+    }, [sequence, isPlaying])
 
     return (
       <PlaybarWrapper
@@ -187,13 +216,19 @@ const HYAppPlayerBar = memo(
       >
         <div className="content wrap-v2">
           <Control isPlaying={isPlaying}>
-            <button className="sprite_player prev"></button>
+            <button
+              className="sprite_player prev"
+              onClick={(e) => changeMusic(-1)}
+            ></button>
             <button
               className="sprite_player pause global_play_btn"
               onClick={(e) => playMusic()}
               ref={playOrPauseRef}
             ></button>
-            <button className="sprite_player next"></button>
+            <button
+              className="sprite_player next"
+              onClick={(e) => changeMusic(1)}
+            ></button>
           </Control>
           <PlayInfo isLoaded={isLoaded}>
             <div className="image ">
@@ -225,14 +260,17 @@ const HYAppPlayerBar = memo(
               </div>
             </div>
           </PlayInfo>
-          <Operator>
+          <Operator sequence={sequence}>
             <div className="left">
               <button className="sprite_player btn favor"></button>
               <button className="sprite_player btn share"></button>
             </div>
             <div className="right sprite_player">
               <button className="sprite_player btn volume"></button>
-              <button className="sprite_player btn loop"></button>
+              <button
+                className="sprite_player btn loop"
+                onClick={(e) => changeSequence()}
+              ></button>
               <button className="sprite_player btn playlist"></button>
             </div>
           </Operator>
@@ -246,7 +284,11 @@ const HYAppPlayerBar = memo(
             onClick={(e) => showPlayBar()}
           ></button>
         </div>
-        <audio ref={audioRef} onTimeUpdate={timeUpdate} />
+        <audio
+          ref={audioRef}
+          onTimeUpdate={(e) => timeUpdate(e)}
+          onEnded={(e) => handleMusicEnded(e)}
+        />
       </PlaybarWrapper>
     )
   })
