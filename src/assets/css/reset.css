@@ -142,10 +142,6 @@ button {
   background: url(../img/playbar_sprite.png) no-repeat 0 9999px;
 }
 
-/* .sprite_player2 {
-  background: url(../img/playbar.png) no-repeat 0 9999px;
-} */
-
 .lyric-class .ant-message-notice-content {
   position: fixed;
   left: 50%;

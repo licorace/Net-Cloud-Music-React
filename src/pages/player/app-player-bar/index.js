@@ -12,6 +12,7 @@ import { NavLink } from 'react-router-dom'
 import { Slider, message } from 'antd'
 import classnames from 'classnames'
 
+import HYAppPlayPanel from '../app-player-panel'
 import { getSizeImage, getPlaySong } from '@/utils/format-utils'
 import dayjs from 'dayjs'
 
@@ -37,9 +38,11 @@ const HYAppPlayerBar = memo(
 
     const [isLoaded, setIsLoaded] = useState(false)
     const [isLoadedCount, setIsLoadedCount] = useState(0)
+    const [showPanel, setShowPanel] = useState(false)
 
     // 控制playbar是否显示的标志符
     const [isShow, setIsShow] = useState(false)
+
     // redux hooks
     const { currentSong, isPlaying, sequence, lyricList, currentLyricIndex } =
       useSelector(
@@ -74,20 +77,10 @@ const HYAppPlayerBar = memo(
     useEffect(() => {
       audioRef.current.src = getPlaySong(currentSong.id)
       dispatch(getLyricAction(currentSong.id))
-      // audioRef.current
-      //   .play()
-      //   .then((res) => {
-      //     dispatch(changeToPlayOrPauseAction(true))
-      //   })
-      //   .catch((err) => {
-      //     console.log(err)
-      //     dispatch(changeToPlayOrPauseAction(false))
-      //   })
     }, [currentSong])
 
     useEffect(() => {
       const isShowValue = window.localStorage.getItem('isShowValue')
-      // console.log(isShow, isShowValue)
       // 这里是判断在刷新之前isShow是处于lock还是unlock状态,'true'是lock状态,那么就要重新执行一次showPlayer,
       // 因为每次刷新之后,isShow都会变成false状态,false是unlock状态,那么就不需要执行showPlayer,因为每次刷新之后,isShow都会变成false状态
       if (isShowValue === 'true') {
@@ -136,10 +129,9 @@ const HYAppPlayerBar = memo(
           break
         }
       }
-      // console.log(i - 1)
-      // console.log(lyricList[currentLyricIndex])
+
       if (currentLyricIndex !== i - 1) {
-        // console.log(i - 1)
+        // console.log(currentLyricIndex)
         dispatch(changeCurrentLyricIndexAction(i - 1))
         const content = lyricList[i - 1] && lyricList[i - 1].content
         message.open({
@@ -165,7 +157,6 @@ const HYAppPlayerBar = memo(
       (value) => {
         const currentTime = ((value / 100) * duration) / 1000
         audioRef.current.currentTime = currentTime
-        // console.log('sliderAfterChange:', audioRef.current.currentTime)
         setCurrentTime(currentTime * 1000)
         setIsChanging(false)
 
@@ -214,7 +205,6 @@ const HYAppPlayerBar = memo(
     const changeMusic = useCallback(
       (tag) => {
         dispatch(changeCurrentIndexAndSongAction(tag))
-        // console.log(isPlaying)
         if (isPlaying) {
           audioRef.current.autoplay = true
         }
@@ -299,7 +289,10 @@ const HYAppPlayerBar = memo(
                 className="sprite_player btn loop"
                 onClick={(e) => changeSequence()}
               ></button>
-              <button className="sprite_player btn playlist"></button>
+              <button
+                className="sprite_player btn playlist"
+                onClick={(e) => setShowPanel(!showPanel)}
+              ></button>
             </div>
           </Operator>
         </div>
@@ -317,6 +310,7 @@ const HYAppPlayerBar = memo(
           onTimeUpdate={(e) => timeUpdate(e)}
           onEnded={(e) => handleMusicEnded(e)}
         />
+        {showPanel && <HYAppPlayPanel />}
       </PlaybarWrapper>
     )
   })
